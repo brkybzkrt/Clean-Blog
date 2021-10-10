@@ -1,14 +1,32 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const Blog = require('./models/Blog')
 const ejs = require('ejs')
 
 const app = express();
 
+
+mongoose.connect('mongodb://localhost/cleanblog-test-db', {
+  usenewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+
+
+
 app.set('view engine',"ejs");
 
+//middlewares
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-  res.render('index');
+app.use(express.urlencoded({extended:true}))
+app.use(express.json())
+
+
+
+app.get('/', async(req, res) => {
+  const blogs= await Blog.find({}).sort({created_date:-1})
+  res.render('index',{blogs});
 });
 
 app.get('/about', (req, res) => {
@@ -16,7 +34,12 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/add', (req, res) => {
-  res.render('addpost');
+  res.render('addPost');
+});
+
+app.post('/addBlog', async (req, res) => {
+  await Blog.create(req.body)
+  res.redirect('/');
 });
 
 const port = 3000;
