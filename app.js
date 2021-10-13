@@ -8,10 +8,14 @@ const pageController=require('./controllers/pageController')
 const app = express();
 
 
-mongoose.connect('mongodb://localhost/cleanblog-test-db', {
+mongoose.connect('mongodb+srv://brkybzkrt:EqopGj0GpfSMSXSZ@cluster0.w6n5r.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
   usenewUrlParser: true,
   useUnifiedTopology: true,
-});
+}).then(()=>{
+  console.log("Connected to DB")
+}).catch((err)=>{
+  console.log(err);
+})
 
 
 
@@ -44,7 +48,7 @@ app.put('/updatePost/:id',postController.updatePost);
 
 app.delete('/deletePost/:id',postController.deletePost);
 
-const port = 3000;
+const port = process.env.PORT|| 5000;
 
 app.listen(port, () => {
   console.log('Server Started...');
